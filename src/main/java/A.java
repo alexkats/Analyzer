@@ -38,3 +38,12 @@ public class A {
         }
     }
 }
+
+class C {
+
+    public void a() {
+        if (1 == 0) {
+
+        }
+    }
+}
