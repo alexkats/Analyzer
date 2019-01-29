@@ -1,0 +1,6 @@
+**/.*
+**/*.iml
+!**/.gitignore
+**/target
+**/*.iws
+**/*.ipr
