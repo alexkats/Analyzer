@@ -1,10 +1,11 @@
-package ru.ifmo.ctddev.verification.analyzer
+package ru.ifmo.ctddev.verification.analyzer.analyzer
 
 import com.github.javaparser.ast.expr.BinaryExpr
 import com.github.javaparser.ast.expr.Expression
 import com.github.javaparser.ast.expr.IntegerLiteralExpr
 import com.github.javaparser.ast.stmt.Statement
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter
+import ru.ifmo.ctddev.verification.analyzer.getPositionAndDescription
 
 class UselessOperationAnalyzer : Analyzer {
 

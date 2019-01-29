@@ -1,9 +1,10 @@
-package ru.ifmo.ctddev.verification.analyzer
+package ru.ifmo.ctddev.verification.analyzer.analyzer
 
 import com.github.javaparser.ast.expr.AssignExpr
 import com.github.javaparser.ast.expr.BinaryExpr
 import com.github.javaparser.ast.stmt.Statement
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter
+import ru.ifmo.ctddev.verification.analyzer.getPositionAndDescription
 
 class SameOperandAnalyzer : Analyzer {
 

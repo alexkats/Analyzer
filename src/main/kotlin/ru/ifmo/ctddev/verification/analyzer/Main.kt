@@ -3,6 +3,12 @@ package ru.ifmo.ctddev.verification.analyzer
 import com.github.javaparser.JavaParser
 import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration
+import ru.ifmo.ctddev.verification.analyzer.analyzer.EmptyBlockAnalyzer
+import ru.ifmo.ctddev.verification.analyzer.analyzer.ExpressionConstAnalyzer
+import ru.ifmo.ctddev.verification.analyzer.analyzer.SameOperandAnalyzer
+import ru.ifmo.ctddev.verification.analyzer.analyzer.UselessOperationAnalyzer
+import ru.ifmo.ctddev.verification.analyzer.analyzer.Warning
+import ru.ifmo.ctddev.verification.analyzer.analyzer.print
 import java.io.File
 
 fun main(args: Array<String>) {
@@ -10,16 +16,14 @@ fun main(args: Array<String>) {
 
     if (args.size != 2) {
         helper()
-        //        return
+        return
     }
 
-    val walker = File(".").walk()
-    val analyzers = listOf(UselessOperationAnalyzer(), SameOperandAnalyzer())
+    val walker = File(args[0]).walk()
+    val methodAnalyzers = listOf(UselessOperationAnalyzer(), SameOperandAnalyzer(), EmptyBlockAnalyzer(), ExpressionConstAnalyzer())
     val warnings = mutableListOf<Warning>()
-    //    val walker = File(args[0]).walk()
 
-    //    File(args[1]).printWriter().use { pw ->
-    File("output.txt").printWriter().use { pw ->
+    File(args[1]).printWriter().use { pw ->
         walker.filter { !it.isDirectory && it.extension == "java" }.forEach { file ->
             warnings.clear()
             val cu: CompilationUnit
@@ -30,10 +34,20 @@ fun main(args: Array<String>) {
                 return@forEach
             }
 
-            pw.println("Checking ${file.canonicalPath} ...\n")
+            cu.types.filter { it is ClassOrInterfaceDeclaration }.forEach { type ->
+                pw.println("Checking class ${cu.packageDeclaration.map { it.name.toString() + "." }.orElse("")}${type.nameAsString} ...")
 
-            analyzers.forEach { analyzer ->
-                cu.types.filter { it is ClassOrInterfaceDeclaration }.forEach { type ->
+                if (!cu.packageDeclaration.isPresent) {
+                    warnings.add(Warning("No package was specified"))
+                }
+
+                cu.imports.forEach {
+                    if (it.isAsterisk) {
+                        warnings.add(Warning("Wildcard import", it.getPositionAndDescription()))
+                    }
+                }
+
+                methodAnalyzers.forEach { analyzer ->
                     type.methods.forEach { method ->
                         analyzer.reset()
                         method.body.ifPresent {
@@ -43,7 +57,9 @@ fun main(args: Array<String>) {
                 }
             }
 
+            pw.println("${warnings.size} warnings found:\n")
             pw.println(warnings.joinToString("\n", transform = Warning::print))
+            pw.println()
         }
     }
 }

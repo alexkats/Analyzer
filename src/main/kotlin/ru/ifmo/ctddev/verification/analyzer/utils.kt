@@ -5,7 +5,7 @@ import com.github.javaparser.ast.Node
 import com.github.javaparser.ast.nodeTypes.NodeWithRange
 import java.util.Optional
 
-fun NodeWithRange<Node>.getPositionAndDescription(): String {
+fun NodeWithRange<Node>.getPositionAndDescription(customDescription: String = ""): String {
     val lineAndColumn: (Optional<Position>) -> String = { p ->
         p.map { "Line: ${it.line}, column: ${it.column}" }.orElse("Position is unknown")
     }
@@ -13,6 +13,10 @@ fun NodeWithRange<Node>.getPositionAndDescription(): String {
     return buildString {
         append("From ${lineAndColumn(begin)} ")
         append("to ${lineAndColumn(end)}")
-        append("\nStatement: \"${this@getPositionAndDescription}\"\n")
+        append("\nStatement: \"${this@getPositionAndDescription.toString().trim()}\"\n")
+
+        if (customDescription.isNotBlank()) {
+            append("$customDescription\n")
+        }
     }
 }

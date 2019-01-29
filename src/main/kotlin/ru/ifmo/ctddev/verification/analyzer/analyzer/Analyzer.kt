@@ -1,4 +1,4 @@
-package ru.ifmo.ctddev.verification.analyzer
+package ru.ifmo.ctddev.verification.analyzer.analyzer
 
 import com.github.javaparser.ast.stmt.Statement
 

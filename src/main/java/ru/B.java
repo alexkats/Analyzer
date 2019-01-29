@@ -10,7 +10,17 @@ public class B {
     int b() {
         int a = 0;
         a = a;
+
+        while (a != 0) {
+
+        }
+
         a |= a;
+
+        synchronized (this) {
+
+        }
+
         return 0;
     }
 }
